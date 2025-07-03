@@ -117,6 +117,13 @@ public:
         return 0;
     }
 
+    void clearTasks() {
+        std::lock_guard<std::mutex> locker(task_mutex);
+        if (!tasks.empty()) {
+            tasks = std::queue<Task>();
+        }
+    }
+
     /*
      * return a future, calling future.get() will wait task done and return RetType.
      * commit(fn, args...)
