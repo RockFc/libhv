@@ -117,6 +117,20 @@ public:
         return 0;
     }
 
+    void clearTasks() {
+        std::lock_guard<std::mutex> locker(task_mutex);
+        if (!tasks.empty()) {
+            tasks = std::queue<Task>();
+        }
+    }
+
+    void tryScaleUp() {
+    std::lock_guard<std::mutex> locker(task_mutex);
+    while (tasks.size() > idle_thread_num && cur_thread_num < max_thread_num) {
+        createThread();
+    }
+}
+
     /*
      * return a future, calling future.get() will wait task done and return RetType.
      * commit(fn, args...)
